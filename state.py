@@ -103,11 +103,11 @@ class Proc:
 
         self.name = name
         self.ip = State.get_new_ip(None)
+        self.owner: "Struct" = None
         self.in_stack = in_stack
         self.out_stack = out_stack
         self.block: Block = None
         
-        self.is_exported: bool = False
         self.is_named: bool = False
         self.is_self_named: bool = False
         self.is_imported: bool = True
