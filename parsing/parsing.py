@@ -964,6 +964,12 @@ def parse_token(token: str, ops: List[Op]) -> Union[Op, List[Op]]:
             assert State.config.target in values, "Enum Platform does not have a current platform defined"
             State.constants["platform"] = values.index(State.config.target)
 
+    elif token == "typealias":
+        name = safe_next_token("A type alias must have a name")
+        State.check_name(name, "type alias")
+        type_ = parse_type(safe_next_token(), "a type alias definition", auto_ptr=False)
+        State.type_aliases[name[0]] = TypeAlias(name[0], type_)
+
     elif token == "asm":
         asm = safe_next_token()[0]
         assert asm.startswith('"') and asm.endswith('"'), "asm must be followed by a string"
