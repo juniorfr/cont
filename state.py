@@ -127,6 +127,9 @@ class Proc:
     def __hash__(self) -> int:
         return id(self)
 
+class TypeAlias:
+    def __init__(self, name: str, )
+
 
 class StateSaver:
     """

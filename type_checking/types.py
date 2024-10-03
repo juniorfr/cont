@@ -273,7 +273,7 @@ def parse_type(
         proc = State.procs[name]
         result = Addr(proc.in_stack, proc.out_stack)
     elif name in State.structures:
-        result = Ptr(State.structures[name]) if auto_ptr else State.structures[name]
+        result = State.structures[name]
     elif name.startswith("@") and allow_unpack:
         if name[1:] not in State.structures:
             assert not throw_exc, f'structure "{name[1:]}" was not found'
@@ -312,7 +312,7 @@ def parse_type(
                 assert not throw_exc, "array type was not defined"
                 result = None
             else:
-                result = Ptr(arr) if auto_ptr else arr
+                result = arr
     elif name == "":
         State.throw_error(f"Expected token, but end was reached in {error}")
     else:
@@ -324,6 +324,8 @@ def parse_type(
                 var_type_scope[name] = var_type
             else:
                 assert not throw_exc, f'Unknown type "{name}" in {error}'
+    if auto_ptr and must_ptr(result):
+        result = Ptr(result)
     if end is not None:
         return ((end is None or end in og_name) or is_ended, result)
     else:
