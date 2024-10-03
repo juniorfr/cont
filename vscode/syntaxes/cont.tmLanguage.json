@@ -15,7 +15,7 @@
 			"patterns": [
 				{
 					"name": "keyword.cont",
-					"match": "\\b(div|enum|struct|proc|nproc|sproc|named|bind|let|(syscall[1-6])|memory|var|memo|const|sizeoftype|unpack|init|asm|type|\\#import|\\#export|(sizeof*\\@)|base|upcast)\\b"
+					"match": "\\b(div|enum|struct|proc|nproc|sproc|named|bind|let|(syscall[1-6])|memory|var|memo|const|sizeoftype|unpack|init|typealias|asm|type|\\#import|\\#export|(sizeof*\\@)|base|upcast)\\b"
 				},
 				{
 					"name": "keyword.control.cont",

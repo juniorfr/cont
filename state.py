@@ -172,6 +172,7 @@ class State:
         cls.constants: Dict[str, int] = {}
         cls.enums: Dict[str, List[str]] = {}
         cls.var_type_scopes: List[Dict[str, "VarType"]] = []  # type: ignore
+        cls.type_aliases: Dict[str, "TypeAlias"] = {}
 
         cls.used_procs: Set[Proc] = set()
         cls.included_files: List[str] = []
@@ -260,7 +261,7 @@ class State:
         Throws an error if it isn't. The `error` parameter indicates what was the type of the thing,
         that was supposed be named with the provided name e. g. a procedure.
         """
-        if token[0] in [*State.procs, *State.memories, 
+        if token[0] in [*State.procs, *State.memories, *State.type_aliases,
             *State.constants, *State.structures, *State.enums]:
             State.loc = token[1]
             State.throw_error(f'name for {error} "{token[0]}" is already taken')

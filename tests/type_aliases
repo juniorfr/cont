@@ -1,0 +1,39 @@
+include std.cn
+
+struct Vector2
+  int x
+  int y
+end
+
+typealias Point Vector2 
+
+proc test @Point Point -> Point:
+  var v Point
+  !v
+  swap print print
+  v.x print v.y print
+  v
+end
+
+69 1 2 420 Vector2 test
+
+typealias Pointer *Point
+
+6 9 init var u Vector2
+var pointer Pointer
+u !pointer
+
+proc test_p Pointer -> Pointer:
+  let e;
+  *e.x inc e
+end
+
+pointer test_p
+u.x print u.y print
+:
+69
+1
+2
+420
+7
+9

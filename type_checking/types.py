@@ -128,6 +128,12 @@ class VarType(Type):
         return hash(self.text_repr())
 
 
+class TypeAlias:
+    def __init__(self, name: str, type_: Type):
+        self.name = name
+        self.type_ = type_
+
+
 class Struct(Type):
     """
     A cont structure. Used both as a type and as a container for storing data about the struct.
@@ -273,13 +279,19 @@ def parse_type(
         proc = State.procs[name]
         result = Addr(proc.in_stack, proc.out_stack)
     elif name in State.structures:
-        result = Ptr(State.structures[name]) if auto_ptr else State.structures[name]
+        result = State.structures[name]
     elif name.startswith("@") and allow_unpack:
-        if name[1:] not in State.structures:
+        # TODO: Refactor this to properly parse the type
+        is_type_alias_struct = name[1:] in State.type_aliases and isinstance(State.type_aliases[name[1:]].type_, Struct)
+        if name[1:] not in State.structures and not is_type_alias_struct:
             assert not throw_exc, f'structure "{name[1:]}" was not found'
             result = None
         else:
-            result = State.structures[name[1:]].fields_types
+            if is_type_alias_struct:
+                result = State.type_aliases[name[1:]].type_.fields_types
+            else:
+                result = State.structures[name[1:]].fields_types
+        
     elif name.startswith("[") and name.endswith("]"):
         if name[1:-1] in State.constants:
             length = State.constants[name[1:-1]]
@@ -312,9 +324,11 @@ def parse_type(
                 assert not throw_exc, "array type was not defined"
                 result = None
             else:
-                result = Ptr(arr) if auto_ptr else arr
+                result = arr
     elif name == "":
         State.throw_error(f"Expected token, but end was reached in {error}")
+    elif name in State.type_aliases:
+        result = State.type_aliases[name].type_
     else:
         if name in State.var_types():
             result = State.var_types()[name]
@@ -324,6 +338,8 @@ def parse_type(
                 var_type_scope[name] = var_type
             else:
                 assert not throw_exc, f'Unknown type "{name}" in {error}'
+    if auto_ptr and must_ptr(result):
+        result = Ptr(result)
     if end is not None:
         return ((end is None or end in og_name) or is_ended, result)
     else:
